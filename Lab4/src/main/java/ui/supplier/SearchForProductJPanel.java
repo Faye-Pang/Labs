@@ -6,10 +6,10 @@
 package ui.supplier;
 
 import model.Product;
+import model.ProductCatalog;
 import model.Supplier;
 import java.awt.CardLayout;
-import javax.swing.JPanel;
-
+import javax.swing.*;
 
 
 /**
@@ -27,6 +27,11 @@ public class SearchForProductJPanel extends JPanel {
         initComponents();
         this.workArea = workArea;
         this.supplier = supplier;
+        if (supplier == null) {
+            JOptionPane.showMessageDialog(this, "Supplier is not initialized.");
+        } else if (supplier.getProductCatalog() == null) {
+            JOptionPane.showMessageDialog(this, "ProductCatalog is not initialized.");
+        }
     }
 
     /** This method is called from within the constructor to
@@ -42,6 +47,8 @@ public class SearchForProductJPanel extends JPanel {
         idField = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        lblProductName = new javax.swing.JLabel();  // 添加显示产品名称的标签
+        lblProductPrice = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -63,6 +70,9 @@ public class SearchForProductJPanel extends JPanel {
             }
         });
 
+        lblProductName.setText("Product Name: ");
+        lblProductPrice.setText("Product Price: ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -78,7 +88,10 @@ public class SearchForProductJPanel extends JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(idField, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(55, 55, 55)
-                        .addComponent(searchButton)))
+                        .addComponent(searchButton))
+                    .addComponent(lblProductName) // 添加产品名称标签到布局
+                    .addComponent(lblProductPrice)
+                )
                 .addContainerGap(343, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -94,7 +107,11 @@ public class SearchForProductJPanel extends JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(idField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton))
-                .addContainerGap())
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(lblProductName) // 添加产品名称标签
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(lblProductPrice) // 添加产品价格标签
+                    .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {idField, searchButton});
@@ -103,7 +120,37 @@ public class SearchForProductJPanel extends JPanel {
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
-        
+        JOptionPane.showMessageDialog(this, "Search button clicked.");
+        if (idField.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a product ID.");
+            return;
+        }
+
+        try {
+            // 解析产品ID
+            int productId = Integer.parseInt(idField.getText());
+
+            // 检查Supplier对象和ProductCatalog是否存在
+            if (supplier == null || supplier.getProductCatalog() == null) {
+                JOptionPane.showMessageDialog(this, "Supplier or ProductCatalog is not initialized.");
+                return;
+            }
+
+            // 搜索产品
+            Product product = supplier.getProductCatalog().searchProduct(productId);
+
+            if (product != null) {
+                // 更新显示产品信息
+                lblProductName.setText("Product Name: " + product.getName());
+                lblProductPrice.setText("Product Price: $" + product.getPrice());
+                JOptionPane.showMessageDialog(this, "Product found.");
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Product not found.");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid Product ID format.");
+        }
         
 }//GEN-LAST:event_searchButtonActionPerformed
 
@@ -121,5 +168,7 @@ public class SearchForProductJPanel extends JPanel {
     private javax.swing.JLabel lblProductId;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JButton searchButton;
+    private javax.swing.JLabel lblProductName;  // 定义 lblProductName
+    private javax.swing.JLabel lblProductPrice;
     // End of variables declaration//GEN-END:variables
 }

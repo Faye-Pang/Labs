@@ -41,7 +41,7 @@ public class ManageProductCatalogJPanel extends JPanel {
         model.setRowCount(0);
 
         for (Product p : supplier.getProductCatalog().getProductCatalog()) {
-            Object row[] = new Object[3];
+            Object[] row = new Object[3];
             row[0] = p;
             row[1] = p.getId();
             row[2] = p.getPrice();
